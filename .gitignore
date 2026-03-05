@@ -31,3 +31,16 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Arquivos Sensíveis - NÃO COMMITAR ###
+.env
+.env.local
+.env.*.local
+application-prod.properties
+application-secret.properties
+
+### Arquivos de IDE e OS ###
+*.log
+*.DS_Store
+Thumbs.db
+
