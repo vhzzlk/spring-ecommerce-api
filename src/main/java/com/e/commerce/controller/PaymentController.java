@@ -1,4 +1,42 @@
 package com.e.commerce.controller;
 
+import com.e.commerce.dto.request.PaymentRequest;
+import com.e.commerce.dto.response.PaymentResponse;
+import com.e.commerce.service.PaymentService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/payments")
+@RequiredArgsConstructor
 public class PaymentController {
+
+    private final PaymentService paymentService;
+
+    @GetMapping
+    public ResponseEntity<List<PaymentResponse>> findAll() {
+        return ResponseEntity.ok(paymentService.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PaymentResponse> findById(@PathVariable UUID id) {
+        return ResponseEntity.ok(paymentService.findById(id));
+    }
+
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<PaymentResponse> findByOrderId(@PathVariable UUID orderId) {
+        return ResponseEntity.ok(paymentService.findByOrderId(orderId));
+    }
+
+    @PostMapping
+    public ResponseEntity<PaymentResponse> create(@Valid @RequestBody PaymentRequest request) {
+        PaymentResponse response = paymentService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 }
