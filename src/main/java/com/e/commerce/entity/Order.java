@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
+@Table(name = "tb_order")
 @Getter
 @Setter
 @AllArgsConstructor
