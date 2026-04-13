@@ -1,6 +1,7 @@
 package com.e.commerce.service;
 
 import com.e.commerce.dto.request.PaymentRequest;
+import com.e.commerce.dto.request.PaymentUpdateRequest;
 import com.e.commerce.dto.response.PaymentResponse;
 import com.e.commerce.entity.Order;
 import com.e.commerce.entity.Payment;
@@ -63,6 +64,23 @@ public class PaymentService {
         order.setStatus(OrderStatus.PAGO);
 
         return toResponse(paymentRepository.save(payment));
+    }
+
+    @Transactional
+    public PaymentResponse update(UUID id, PaymentUpdateRequest request) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pagamento nao encontrado"));
+
+        payment.setMoment(request.getMoment());
+        return toResponse(paymentRepository.save(payment));
+    }
+
+    @Transactional
+    public void delete(UUID id) {
+        if (!paymentRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Pagamento nao encontrado");
+        }
+        paymentRepository.deleteById(id);
     }
 
     private PaymentResponse toResponse(Payment payment) {

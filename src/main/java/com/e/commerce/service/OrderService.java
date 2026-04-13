@@ -2,6 +2,7 @@ package com.e.commerce.service;
 
 import com.e.commerce.dto.request.OrderItemRequest;
 import com.e.commerce.dto.request.OrderRequest;
+import com.e.commerce.dto.request.OrderUpdateRequest;
 import com.e.commerce.dto.response.OrderItemResponse;
 import com.e.commerce.dto.response.OrderResponse;
 import com.e.commerce.entity.Order;
@@ -83,6 +84,23 @@ public class OrderService {
 
         order.setOrderItems(items);
         return toResponse(orderRepository.save(order));
+    }
+
+    @Transactional
+    public OrderResponse update(UUID id, OrderUpdateRequest request) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido nao encontrado"));
+
+        order.setStatus(request.getStatus());
+        return toResponse(orderRepository.save(order));
+    }
+
+    @Transactional
+    public void delete(UUID id) {
+        if (!orderRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Pedido nao encontrado");
+        }
+        orderRepository.deleteById(id);
     }
 
     private OrderResponse toResponse(Order order) {

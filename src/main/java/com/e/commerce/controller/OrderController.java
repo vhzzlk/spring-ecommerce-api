@@ -1,6 +1,7 @@
 package com.e.commerce.controller;
 
 import com.e.commerce.dto.request.OrderRequest;
+import com.e.commerce.dto.request.OrderUpdateRequest;
 import com.e.commerce.dto.response.OrderResponse;
 import com.e.commerce.service.OrderService;
 import jakarta.validation.Valid;
@@ -19,7 +20,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<OrderResponse>> findAll(@RequestParam(required = false) UUID userId) {
         if (userId != null) {
             return ResponseEntity.ok(orderService.findByUserId(userId));
@@ -27,14 +28,25 @@ public class OrderController {
         return ResponseEntity.ok(orderService.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/find/{id}")
     public ResponseEntity<OrderResponse> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(orderService.findById(id));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<OrderResponse> create(@Valid @RequestBody OrderRequest request) {
         OrderResponse response = orderService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<OrderResponse> update(@PathVariable UUID id, @Valid @RequestBody OrderUpdateRequest request) {
+        return ResponseEntity.ok(orderService.update(id, request));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        orderService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
