@@ -3,6 +3,7 @@ package com.e.commerce.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -123,18 +124,18 @@ public class SecurityConfig {
         // Isto permite que JWT seja validado em cada requisição
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         
-        // Configurar autorização HTTP
-        .authorizeHttpRequests(auth -> auth
-            // Endpoints públicos (autenticação não requerida)
-            .requestMatchers("/auth/**").permitAll()                              // Login e register
-            .requestMatchers("/api/v1/products", "/api/v1/products/**").permitAll() // GET public
-            .requestMatchers("GET", "/api/v1/categories", "/api/v1/categories/**").permitAll()
-            
-            // Endpoints protegidos (autenticação requerida)
-            // @PreAuthorize nos controllers define quem pode acessar
-            .anyRequest().authenticated()
-        )
-        
+         // Configurar autorização HTTP
+         .authorizeHttpRequests(auth -> auth
+             // Endpoints públicos (autenticação não requerida)
+             .requestMatchers("/auth/**").permitAll()                                    // Login e register
+             .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()        // GET produtos - público
+             .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()      // GET categorias - público
+
+             // Endpoints protegidos (autenticação requerida)
+             // @PreAuthorize nos controllers define quem pode acessar
+             .anyRequest().authenticated()
+         )
+
         // Configurar gerenciamento de sessão
         .sessionManagement(session -> session
             // STATELESS: não criar/usar sessões HTTP
