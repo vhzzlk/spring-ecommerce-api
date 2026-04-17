@@ -17,6 +17,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Orquestra consultas e registro de pagamentos vinculados a pedidos.
+ */
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -65,6 +68,9 @@ public class PaymentService {
         return toResponse(paymentRepository.save(payment));
     }
 
+    /**
+     * Mapeia a entidade de pagamento para o DTO de resposta.
+     */
     private PaymentResponse toResponse(Payment payment) {
         return new PaymentResponse(
                 payment.getId(),

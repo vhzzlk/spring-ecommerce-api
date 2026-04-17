@@ -14,19 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.Instant;
 
 /**
- * Handler global de exceções da aplicação.
- *
- * Intercepta todas as exceptions lançadas pelos controllers/services
- * e retorna respostas HTTP padronizadas com DTOs de erro.
- *
- * Handlers disponíveis:
- * 1. ResourceNotFoundException → 404
- * 2. DatabaseException → 409
- * 3. UnauthorizedException → 401
- * 4. ForbiddenException → 403
- * 5. MethodArgumentNotValidException → 422
- * 6. DataIntegrityViolationException → 409
- * 7. Exception (fallback) → 500
+ * Centraliza a tradução das exceções da aplicação para respostas HTTP padronizadas.
  */
 @RestControllerAdvice
 public class ResourceExceptionHandler {
@@ -66,7 +54,7 @@ public class ResourceExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationError> validation(MethodArgumentNotValidException e, HttpServletRequest request) {
         String error = "Validation error";
-        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        HttpStatus status = HttpStatus.UNPROCESSABLE_CONTENT;
         ValidationError err = new ValidationError(Instant.now(), status.value(), error, "Erro de validacao", request.getRequestURI());
 
         for (FieldError f : e.getBindingResult().getFieldErrors()) {
@@ -77,7 +65,7 @@ public class ResourceExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<StandardError> dataIntegrityViolation(DataIntegrityViolationException e, HttpServletRequest request) {
+    public ResponseEntity<StandardError> dataIntegrityViolation(HttpServletRequest request) {
         String error = "Database integrity violation";
         HttpStatus status = HttpStatus.CONFLICT;
         StandardError err = new StandardError(Instant.now(), status.value(), error, "Violacao de integridade dos dados", request.getRequestURI());

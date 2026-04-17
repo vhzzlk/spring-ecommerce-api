@@ -18,11 +18,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Gerencia o ciclo de vida de pedidos e a montagem da representação de saída.
+ */
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -64,7 +71,7 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario nao encontrado"));
 
         Order order = new Order();
-        order.setMoment(LocalDate.now());
+        order.setMoment(LocalDateTime.now());
         order.setStatus(OrderStatus.AGUARDANDO_PAGAMENTO);
         order.setUser(user);
 
@@ -85,6 +92,9 @@ public class OrderService {
         return toResponse(orderRepository.save(order));
     }
 
+    /**
+     * Converte o pedido e seus itens em DTO, incluindo o cálculo de subtotais e total.
+     */
     private OrderResponse toResponse(Order order) {
         List<OrderItemResponse> items = new ArrayList<>();
         BigDecimal total = BigDecimal.ZERO;

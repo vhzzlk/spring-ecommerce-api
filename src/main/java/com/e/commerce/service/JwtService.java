@@ -14,12 +14,10 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Serviço responsável por gerenciar tokens JWT.
+ * Encapsula a emissão, leitura e validação de JWT.
  *
- * Funções:
- * - Gerar tokens JWT
- * - Validar tokens JWT
- * - Extrair informações do token (email, expiração, etc)
+ * <p>O token utiliza o e-mail como subject e assinatura HMAC baseada em chave
+ * externa configurada via propriedades da aplicação.
  */
 @Service
 public class JwtService {
@@ -31,14 +29,14 @@ public class JwtService {
     private long jwtExpiration;
 
     /**
-     * Extrai o email (subject) do token JWT.
+     * Extrai o subject do token, que representa o identificador principal do usuário.
      */
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
     /**
-     * Extrai uma claim específica do token.
+     * Extrai uma claim específica do token assinado.
      */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
@@ -46,31 +44,31 @@ public class JwtService {
     }
 
     /**
-     * Gera um token JWT para o usuário.
+     * Gera um JWT sem claims adicionais.
      *
-     * @param email Email do usuário
-     * @return Token JWT gerado
+     * @param email e-mail usado como subject
+     * @return token assinado
      */
     public String generateToken(String email) {
         return generateToken(new HashMap<>(), email);
     }
 
     /**
-     * Gera token JWT com claims customizadas.
+     * Gera um JWT com claims adicionais.
      */
     public String generateToken(Map<String, Object> extraClaims, String email) {
         return buildToken(extraClaims, email, jwtExpiration);
     }
 
     /**
-     * Retorna o tempo de expiração em milissegundos.
+     * Retorna o tempo de expiração configurado, em milissegundos.
      */
     public long getExpirationTime() {
         return jwtExpiration;
     }
 
     /**
-     * Constrói o token JWT.
+     * Monta e assina o token com data de emissão e expiração.
      */
     private String buildToken(
             Map<String, Object> extraClaims,
@@ -89,7 +87,7 @@ public class JwtService {
     }
 
     /**
-     * Valida se o token é válido para o usuário.
+     * Valida correspondência entre subject e expiração.
      */
     public boolean isTokenValid(String token, String email) {
         final String username = extractUsername(token);
@@ -97,21 +95,21 @@ public class JwtService {
     }
 
     /**
-     * Verifica se o token expirou.
+     * Verifica se a data de expiração já foi atingida.
      */
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
     /**
-     * Extrai a data de expiração do token.
+     * Extrai o instante de expiração do token.
      */
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
     /**
-     * Extrai todas as claims do token.
+     * Faz o parse do token e valida a assinatura antes de expor as claims.
      */
     private Claims extractAllClaims(String token) {
         return Jwts
@@ -123,7 +121,7 @@ public class JwtService {
     }
 
     /**
-     * Obtém a chave de assinatura a partir da secret key.
+     * Converte a chave configurada para o formato exigido pelo JJWT.
      */
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
