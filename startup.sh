@@ -1,30 +1,16 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "=== Spring E-Commerce API - Starting ==="
-echo "Java Version:"
-java -version
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT_DIR"
 
-echo ""
-echo "=== Setting Environment Variables ==="
-export DB_URL=${DB_URL:-jdbc:mysql://avnadmin:REMOVED_SECRET@mysql-ecommerce-vhzzlk.c.aivencloud.com:16320/defaultdb?ssl-mode=REQUIRED}
-export DB_USERNAME=${DB_USERNAME:-avnadmin}
-export DB_PASSWORD=${DB_PASSWORD}
-export JWT_SECRET=${JWT_SECRET}
-export JWT_EXPIRATION=${JWT_EXPIRATION:-3600000}
-export SERVER_PORT=${PORT:-8080}
+if [[ -f ".env" ]]; then
+  echo "[startup] .env encontrado"
+else
+  echo "[startup] Aviso: .env não encontrado; usando apenas variáveis do ambiente"
+fi
 
-echo "Database URL: $DB_URL"
-echo "Database User: $DB_USERNAME"
-echo "Server Port: $SERVER_PORT"
-echo ""
+export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE:-dev}"
 
-echo "=== Starting Application ==="
-java -Dserver.port=$SERVER_PORT \
-     -Dspring.datasource.url=$DB_URL \
-     -Dspring.datasource.username=$DB_USERNAME \
-     -Dspring.datasource.password=$DB_PASSWORD \
-     -Dsecurity.jwt.secret-key=$JWT_SECRET \
-     -Dsecurity.jwt.expiration-time=$JWT_EXPIRATION \
-     -jar commerce-0.0.1-SNAPSHOT.jar
+exec ./mvnw spring-boot:run -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE"
 

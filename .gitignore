@@ -14,7 +14,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -34,13 +34,15 @@ build/
 
 ### Arquivos Sensíveis - NÃO COMMITAR ###
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+src/main/resources/.env
+src/main/resources/.env.*
 application-prod.properties
 application-secret.properties
 
 ### Arquivos de IDE e OS ###
 *.log
-*.DS_Store
+.DS_Store
 Thumbs.db
 

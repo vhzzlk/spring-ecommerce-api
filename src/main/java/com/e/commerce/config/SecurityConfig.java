@@ -62,7 +62,7 @@ public class SecurityConfig {
     /**
      * Configuração da cadeia de filtros de segurança.
      *
-     * Regras atuais:
+         * Regras atuais:
      * 1. Apenas usuário NÃO autenticado acessa /auth/login e /auth/register
      * 2. Endpoints de escrita de catálogo exigem role ADMIN
      * 3. Demais endpoints exigem autenticação
