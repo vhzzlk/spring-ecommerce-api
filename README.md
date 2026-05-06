@@ -4,78 +4,56 @@ Uma API REST completa para e-commerce construída com Spring Boot, com suporte p
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Java 25**: Linguagem principal.
-- **Spring Boot 4.0.3**: Framework base para o back-end, incluindo Spring Web, Spring Data JPA, Spring Security e Validation.
-- **MySQL**: Banco de dados relacional (Aiven Cloud configurado).
-- **JWT (JSON Web Token)**: Segurança e autenticação com a biblioteca jjwt.
-- **Maven**: Gerenciador de dependências e build.
-- **Dotenv**: Gerenciamento facilitado de variáveis de ambiente no ambiente de desenvolvimento (`spring-dotenv`).
+- **Java 21**: Linguagem principal.
+- **Spring Boot 4.0.3**: Framework base para o back-end.
+- **Spring Security & JWT**: Autenticação e autorização segura.
+- **Spring Data JPA**: Abstração de acesso ao banco de dados.
+- **MySQL**: Banco de dados relacional.
+- **SpringDoc OpenAPI (Swagger)**: Documentação automatizada da API.
+- **Docker & Docker Compose**: Containerização e orquestração.
+- **Maven**: Gerenciador de dependências.
 
-## ⚙️ Pré-requisitos
+## 📖 Documentação da API (Swagger)
 
-Para rodar este projeto localmente, certifique-se de ter:
+Com a aplicação rodando, você pode acessar a documentação interativa do Swagger UI em:
+`http://localhost:8080/swagger-ui/index.html`
 
-- [Java JDK 25+](https://jdk.java.net/)
-- [Maven](https://maven.apache.org/) (Opcional, o projeto usa o wrapper `./mvnw`)
-- Opcional: Instância do MySQL rodando ou banco na nuvem.
+## 🚀 Como Executar
 
-## 🚀 Configuração Inicial e Como Executar Localmente
+### Via Docker (Recomendado)
 
-### 1. Clonando o Repositório
-
-```bash
-git clone <URL-DO-SEU-REPOSITORIO>
-cd spring-ecommerce-api
-```
-
-### 2. Configurando Variáveis de Ambiente
-
-Crie um novo arquivo chamado `.env` na raiz do projeto, baseando-se no arquivo `.env.example` existente, ou apenas adicione suas próprias credenciais configuradas:
-
-```env
-DB_URL=jdbc:mysql://SEU-HOST:PORT/DB?sslMode=REQUIRED
-DB_USERNAME=SEU-USER
-DB_PASSWORD=SUA-SENHA
-SPRING_DATASOURCE_PASSWORD=SUA-SENHA
-JWT_SECRET=UM-SECRET-SEGURO-AQUI-NO-MINIMO-256-BITS
-JWT_EXPIRATION=3600000
-SPRING_PROFILES_ACTIVE=dev
-```
-
-> **Atenção:** O arquivo `.env` já está no `.gitignore` para proteção das credenciais e chaves do banco e da sua cloud não subirem para o GitHub.
-
-### 3. Compilando e Executando
-
-Com o ambiente em ordem, limpe a compilação anterior, construa o projeto e inicie:
+Certifique-se de ter o Docker e o Docker Compose instalados.
 
 ```bash
-# Dar permissão de execução ao Wrapper (Linux/Mac)
-chmod +x mvnw
+docker-compose up --build
+```
 
-# Para compilar garantindo que não há erros
-./mvnw clean compile
+Isso iniciará a API e o banco de dados MySQL automaticamente.
 
-# Rodando o projeto
+### Localmente
+
+1. **Configurar o Banco de Dados:** Certifique-se de ter um MySQL rodando.
+2. **Configurar Variáveis de Ambiente:** Crie um arquivo `.env` na raiz (veja `.env.example`).
+3. **Executar:**
+```bash
 ./mvnw spring-boot:run
 ```
 
-## ☁️ Deploy (Azure / Nuvem)
+## 📦 Estrutura do Projeto
 
-Ao realizar deploy para Azure App Services ou Azure Spring Apps e outras clouds:
+- `controller/`: Endpoints da API.
+- `service/`: Lógica de negócio.
+- `repository/`: Acesso ao banco de dados.
+- `entity/`: Modelos de dados.
+- `dto/`: Objetos de transferência de dados.
+- `config/`: Configurações de segurança e Swagger.
 
-1. **Não envie o arquivo `.env` para a nuvem**, ele existe somente para facilitar o desenvolvimento local.
-2. Nas configurações do serviço de hospedagem (Application Settings/Environment variables), adicione as referidas variáveis de ambiente do seu banco de dados MySQL no Aiven e JWT (`DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`).
-3. Você pode gerar o executável (build) para deploy executando:
-   ```bash
-   ./mvnw clean package -DskipTests
-   ```
-   Isso criará seu `.jar` executável na pasta `/target`.
+## 🛡️ Segurança
 
-## 📦 Estrutura Essencial do Projeto
+A API utiliza JWT para autenticação. Para acessar endpoints protegidos (como criação de produtos), é necessário:
+1. Registrar um usuário.
+2. Fazer login para obter o token JWT.
+3. Incluir o token no header `Authorization: Bearer <token>`.
 
-- `controller/`: Camada com endpoints/APIs REST (Auth, Categoria, Produtos...).
-- `service/`: Regras de negócio, tratamento e fluxo da API.
-- `repository/`: Camada de comunicação com o JPA/Hibernate e abstrações de acesso ao MySQL.
-- `entity/`: Classes de mapeamento Objeto-Relacional referenciando tabelas como `User`, `Product`, `Order`.
-- `exception/`: Middleware para interceptação central global de eventos de erro (ResourceExceptionHandler).
-- `dto/`: Transfer objects para receber e entregar payloads limpos pelas portas http do sistema.
+---
+Desenvolvido por [Victor Hugo](https://github.com/vhzzlk)
