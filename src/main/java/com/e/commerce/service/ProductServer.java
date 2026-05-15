@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -26,6 +27,7 @@ public class ProductServer {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final PhotoStorageService photoStorageService;
 
     @Transactional(readOnly = true)
     public List<ProductResponse> findAll() {
@@ -55,6 +57,15 @@ public class ProductServer {
                 .orElseThrow(() -> new ResourceNotFoundException("Produto nao encontrado"));
 
         copyRequestToEntity(request, product);
+        return toResponse(productRepository.save(product));
+    }
+
+    @Transactional
+    public ProductResponse uploadPhoto(UUID id, MultipartFile photo) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Produto nao encontrado"));
+        String imageUrl = photoStorageService.saveProductPhoto(photo);
+        product.setImageUrl(imageUrl);
         return toResponse(productRepository.save(product));
     }
 

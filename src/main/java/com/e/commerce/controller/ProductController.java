@@ -5,9 +5,11 @@ import com.e.commerce.dto.response.ProductResponse;
 import com.e.commerce.service.ProductServer;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +40,11 @@ public class ProductController {
     @PutMapping("/update/{id}")
     public ResponseEntity<ProductResponse> update(@PathVariable UUID id, @Valid @RequestBody ProductRequest request) {
         return ResponseEntity.ok(productService.update(id, request));
+    }
+
+    @PostMapping(value = "/upload/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProductResponse> uploadPhoto(@PathVariable UUID id, @RequestParam("photo") MultipartFile photo) {
+        return ResponseEntity.ok(productService.uploadPhoto(id, photo));
     }
 
     @DeleteMapping("/delete/{id}")
