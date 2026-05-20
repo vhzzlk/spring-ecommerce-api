@@ -30,7 +30,6 @@ public class ProductRequest {
     @DecimalMin(value = "0.01", message = "Preco deve ser maior que zero")
     private BigDecimal price;
 
-    @NotBlank(message = "Imagem e obrigatoria")
     @Size(max = 500, message = "URL da imagem deve ter no maximo 500 caracteres")
     private String imageUrl;
 

@@ -73,6 +73,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Desabilita CSRF (não precisa em API REST)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").anonymous()
+                        .requestMatchers(HttpMethod.GET, "/uploads/photos/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/categories/**", "/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/categories/**", "/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/categories/**", "/products/**").hasRole("ADMIN")

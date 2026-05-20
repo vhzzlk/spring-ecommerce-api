@@ -86,7 +86,9 @@ public class ProductServer {
         product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
-        product.setImageUrl(request.getImageUrl());
+        if (request.getImageUrl() != null && !request.getImageUrl().isBlank()) {
+            product.setImageUrl(request.getImageUrl());
+        }
 
         Set<Category> categories = new LinkedHashSet<>();
         Arrays.stream(request.getCategories())
